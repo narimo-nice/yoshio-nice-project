@@ -6,28 +6,8 @@ const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── Claude API ─────────────────────────────────────────────────
-const ANTHROPIC_KEY = process.env.REACT_APP_ANTHROPIC_KEY;
-
-const SYSTEM_PROMPT = `あなたはYoshioの専属パーソナル秘書AIです。
-
-【Yoshioのプロフィール】
-- 名前：成毛喜男（よしお）、51歳、京都府与謝野町在住
-- 仕事：株式会社マドック 営業＆マーケティング
-- 健康：血圧高め（上140・下95〜100）、現在体重75kg→目標63kg（-12kg）
-- 生活：5時起床・20時就寝・夕方散歩習慣あり
-- 人生ビジョン：与謝野町の活性化に貢献・2030年春 町議会議員選挙 当選
-
-【3本柱】
-A. ダイエット：夜ご飯7割・早歩き週4〜5日・体重測定毎週
-B. 与謝野町：SNS発信（Facebook週3・Instagram週2〜3・YouTube月2〜4本）・2030年出馬
-C. マドック：建築板金業界向けAI講座（32万円/人・助成金82%OFF）・年間売上目標1億592万円
-
-【秘書スタイル】
-- 日本語で、親しみやすく・プロフェッショナルに
-- バックキャスト思考で「今日すべき最善の行動」を提示
-- 必要に応じて医師・経営コンサル・ライフコーチの視点を提供
-- 回答は簡潔に（200字以内を目安）、必要に応じて箇条書き`;
+// ── Claude Project URL ─────────────────────────────────────────
+const CLAUDE_PROJECT_URL = "https://claude.ai/project/019dd12c-f63f-7424-8364-3ac7511011c3";
 
 // ── Styles ─────────────────────────────────────────────────────
 const S = `
@@ -51,6 +31,9 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .nitem{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;font-size:13px;color:rgba(255,255,255,.6)}
 .nitem:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
 .nitem.active{border-left-color:var(--gold);background:rgba(245,166,35,.1);color:var(--gold);font-weight:700}
+.nitem-ext{border-left-color:rgba(10,124,94,.5)}
+.nitem-ext:hover{background:rgba(10,124,94,.1);color:var(--em2)}
+.ext-badge{font-size:9px;opacity:0.6;margin-left:auto;background:rgba(10,124,94,.2);color:var(--em2);padding:2px 5px;border-radius:4px;letter-spacing:.5px}
 .sfooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.3)}
 .sfooter strong{color:rgba(255,255,255,.6);display:block;margin-bottom:2px}
 .main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
@@ -83,7 +66,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .axcard{border-radius:12px;padding:16px;border:1px solid var(--bdr);background:var(--sur);transition:transform .15s}
 .axcard:hover{transform:translateY(-2px)}
 .axh{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.axic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.axic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:16px}
 .axt{font-size:13px;font-weight:700}
 .axs{font-size:11px;color:var(--tx3)}
 .tasks{display:flex;flex-direction:column;gap:6px;margin-top:10px}
@@ -103,19 +86,6 @@ textarea.ji:focus{border-color:var(--navy)}
 .rl{font-size:10px;color:var(--tx3);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 .ri{border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--navy);background:var(--bg);outline:none;transition:border-color .15s;width:100%}
 .ri:focus{border-color:var(--navy);background:white}
-.cwrap{display:flex;flex-direction:column;height:420px}
-.cmsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--bg);border-radius:8px;margin-bottom:10px}
-.cbub{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6}
-.cbub.user{align-self:flex-end;background:var(--navy);color:white;border-bottom-right-radius:3px}
-.cbub.ai{align-self:flex-start;background:white;border:1px solid var(--bdr);color:var(--tx);border-bottom-left-radius:3px}
-.ailbl{font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-.cinrow{display:flex;gap:8px}
-.cin{flex:1;border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;font-size:13px;font-family:'Noto Sans JP',sans-serif;color:var(--tx);background:white;outline:none;transition:border-color .15s}
-.cin:focus{border-color:var(--navy)}
-.ldots{display:inline-flex;gap:4px}
-.ldots span{width:6px;height:6px;border-radius:50%;background:var(--tx3);animation:bounce 1.2s infinite}
-.ldots span:nth-child(2){animation-delay:.2s}.ldots span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
 .btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;font-family:'Noto Sans JP',sans-serif;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
 .btn-p{background:var(--navy);color:white}.btn-p:hover{background:var(--navy2)}
 .btn-g{background:var(--gold);color:var(--navy)}.btn-g:hover{background:var(--gold2)}
@@ -144,6 +114,13 @@ textarea.ji:focus{border-color:var(--navy)}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .sdiv{height:1px;background:var(--bdr);margin:16px 0}
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--tx3);font-size:13px}
+.chat-launch{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:24px}
+.chat-launch-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--pur));display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 12px 32px rgba(27,42,94,.25)}
+.chat-launch-title{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:6px}
+.chat-launch-sub{font-size:13px;color:var(--tx3);line-height:1.7;max-width:340px}
+.chat-launch-btn{padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;border:none;cursor:pointer;background:linear-gradient(135deg,var(--navy),var(--pur));color:white;display:inline-flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(27,42,94,.3);transition:all .2s}
+.chat-launch-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(27,42,94,.4)}
+.chat-launch-note{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:6px}
 `;
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -423,67 +400,32 @@ function Goals({ tasks, setTasks, toast }) {
   );
 }
 
-// ── Chat ───────────────────────────────────────────────────────
-function Chat({ toast }) {
-  const [msgs, setMsgs] = useState([{ role: "ai", text: "こんにちは、Yoshioさん！今日も絶好調ですか？何でも相談してください。バックキャスト思考で、今日の最善の行動を一緒に考えましょう。" }]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => { ref.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, loading]);
-
-  const send = async () => {
-    const text = input.trim();
-    if (!text || loading) return;
-    setInput("");
-    setMsgs(p => [...p, { role: "user", text }]);
-    setLoading(true);
-    try {
-      const history = msgs.map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.text }));
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: SYSTEM_PROMPT, messages: [...history, { role: "user", content: text }] })
-      });
-      const data = await res.json();
-      const reply = data.content?.find(c => c.type === "text")?.text ?? "エラーが発生しました";
-      setMsgs(p => [...p, { role: "ai", text: reply }]);
-    } catch { setMsgs(p => [...p, { role: "ai", text: "通信エラーが発生しました。" }]); }
-    finally { setLoading(false); }
-  };
-
-  const quick = ["今日の体重を報告します", "モチベーションが下がっています", "AI講座の営業トークを教えて", "今週の優先アクションは？"];
-
+// ── Chat（ジャンプ方式）────────────────────────────────────────
+function Chat() {
   return (
     <div>
-      <div className="ph"><h2>秘書AIチャット</h2><p>Yoshio専属の戦略秘書。何でも話しかけてください</p></div>
-      <div className="card">
-        <div className="card-h">
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,var(--navy),var(--pur))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>🤖</div>
-            <div><div className="card-t">パーソナル秘書 AI</div><div style={{ fontSize: 10, color: "var(--em)", fontWeight: 700 }}>● オンライン</div></div>
+      <div className="ph"><h2>秘書AIチャット</h2><p>Yoshio専属の戦略秘書 — Claudeプロジェクトで起動します</p></div>
+      <div className="chat-launch">
+        <div className="chat-launch-icon">🤖</div>
+        <div>
+          <div className="chat-launch-title">Yoshioナイスプロジェクト秘書</div>
+          <div className="chat-launch-sub">
+            バックキャスト思考で<br />
+            今日の最善の行動を一緒に考えます。<br />
+            ボタンをクリックして秘書を起動してください。
           </div>
         </div>
-        <div className="card-b">
-          <div className="cwrap">
-            <div className="cmsgs">
-              {msgs.map((m, i) => (
-                <div key={i} className={`cbub ${m.role}`}>
-                  {m.role === "ai" && <div className="ailbl">秘書 AI</div>}
-                  <div style={{ whiteSpace: "pre-wrap" }}>{m.text}</div>
-                </div>
-              ))}
-              {loading && <div className="cbub ai"><div className="ailbl">秘書 AI</div><div className="ldots"><span /><span /><span /></div></div>}
-              <div ref={ref} />
-            </div>
-            <div style={{ marginBottom: 8, display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {quick.map(q => <button key={q} className="btn btn-gh btn-sm" onClick={() => setInput(q)}>{q}</button>)}
-            </div>
-            <div className="cinrow">
-              <input className="cin" placeholder="Yoshio秘書に話しかける..." value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()} />
-              <button className="btn btn-p" onClick={send} disabled={loading}>{loading ? "..." : "送信"}</button>
-            </div>
-          </div>
+        <button
+          className="chat-launch-btn"
+          onClick={() => window.open(CLAUDE_PROJECT_URL, "_blank")}
+        >
+          <span>🚀</span>
+          <span>秘書AIを起動する</span>
+          <span style={{ fontSize: 11, opacity: 0.7 }}>↗</span>
+        </button>
+        <div className="chat-launch-note">
+          <span>🔒</span>
+          <span>Claude.aiが別タブで開きます</span>
         </div>
       </div>
     </div>
@@ -590,9 +532,10 @@ export default function App() {
     { id: "dashboard", label: "ダッシュボード", icon: "🏠" },
     { id: "health", label: "健康記録", icon: "📊" },
     { id: "goals", label: "目標トラッカー", icon: "🎯" },
-    { id: "chat", label: "秘書AIチャット", icon: "🤖" },
+    { id: "chat", label: "秘書AIチャット", icon: "🤖", external: CLAUDE_PROJECT_URL },
     { id: "journal", label: "日誌", icon: "📝" },
   ];
+
   const titles = { dashboard: "ダッシュボード", health: "健康記録", goals: "目標トラッカー", chat: "秘書AIチャット", journal: "日誌" };
   const unread = NOTIFS.filter(n => n.unread).length;
 
@@ -608,8 +551,20 @@ export default function App() {
           <div className="snav">
             <div className="snav-lbl">メニュー</div>
             {navItems.map(item => (
-              <div key={item.id} className={`nitem ${page === item.id ? "active" : ""}`} onClick={() => setPage(item.id)}>
-                <span>{item.icon}</span><span>{item.label}</span>
+              <div
+                key={item.id}
+                className={`nitem ${!item.external && page === item.id ? "active" : ""} ${item.external ? "nitem-ext" : ""}`}
+                onClick={() => {
+                  if (item.external) {
+                    window.open(item.external, "_blank");
+                  } else {
+                    setPage(item.id);
+                  }
+                }}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+                {item.external && <span className="ext-badge">↗ CLAUDE</span>}
               </div>
             ))}
           </div>
@@ -643,7 +598,7 @@ export default function App() {
                 {page === "dashboard" && <Dashboard tasks={tasks} setTasks={setTasks} records={records} toast={showToast} />}
                 {page === "health" && <Health records={records} setRecords={setRecords} toast={showToast} />}
                 {page === "goals" && <Goals tasks={tasks} setTasks={setTasks} toast={showToast} />}
-                {page === "chat" && <Chat toast={showToast} />}
+                {page === "chat" && <Chat />}
                 {page === "journal" && <Journal journals={journals} setJournals={setJournals} toast={showToast} />}
               </>
             )}
