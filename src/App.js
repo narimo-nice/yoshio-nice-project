@@ -1,29 +1,25 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-// ── Supabase 設定 ──────────────────────────────────────────────
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── Claude Project URL ─────────────────────────────────────────
 const CLAUDE_PROJECT_URL = "https://claude.ai/project/019dd12c-f63f-7424-8364-3ac7511011c3";
 
-// ── Styles ─────────────────────────────────────────────────────
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --navy:#1B2A5E;--navy2:#2A3F7E;--em:#0A7C5E;--em2:#12A37D;
   --gold:#F5A623;--gold2:#FFD166;--pur:#7B5EA7;--red:#C0392B;
-  --bg:#F0F4FF;--sur:#FFFFFF;--sur2:#F4F6FC;--bdr:#DDE3F0;
+  --bg:#F0F4FF;--sur:#FFFFFF;--bdr:#DDE3F0;
   --tx:#1B2A5E;--tx2:#4A5568;--tx3:#8896B0;--sw:220px;
-  --tab-h:64px;
+  --tab-h:72px;
 }
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
 
-/* ── SHELL ── */
 .shell{display:flex;min-height:100vh}
 
 /* ── SIDEBAR (デスクトップ) ── */
@@ -36,9 +32,8 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .nitem{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;font-size:13px;color:rgba(255,255,255,.6)}
 .nitem:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
 .nitem.active{border-left-color:var(--gold);background:rgba(245,166,35,.1);color:var(--gold);font-weight:700}
-.nitem-ext{border-left-color:rgba(10,124,94,.5)}
 .nitem-ext:hover{background:rgba(10,124,94,.1);color:var(--em2)}
-.ext-badge{font-size:9px;opacity:0.6;margin-left:auto;background:rgba(10,124,94,.2);color:var(--em2);padding:2px 5px;border-radius:4px;letter-spacing:.5px}
+.ext-badge{font-size:9px;opacity:0.6;margin-left:auto;background:rgba(10,124,94,.2);color:var(--em2);padding:2px 5px;border-radius:4px}
 .sfooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.3)}
 .sfooter strong{color:rgba(255,255,255,.6);display:block;margin-bottom:2px}
 
@@ -50,26 +45,87 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .topbar-r{display:flex;align-items:center;gap:12px;position:relative}
 .nbtn{width:34px;height:34px;border-radius:8px;background:var(--bg);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative;transition:background .15s}
 .nbtn:hover{background:var(--bdr)}
-.nbadge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--red);color:white;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace}
+.nbadge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--red);color:white;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--pur));display:flex;align-items:center;justify-content:center;font-size:13px;color:white;font-weight:700;cursor:pointer}
 .content{padding:24px 28px;flex:1}
 
-/* ── BOTTOM TAB NAV (スマホ) ── */
-.tab-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--tab-h);background:var(--navy);z-index:200;border-top:1px solid rgba(255,255,255,.1);padding-bottom:env(safe-area-inset-bottom)}
-.tab-items{display:flex;height:100%}
-.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,.45);border-top:2px solid transparent;font-size:10px;font-weight:500;-webkit-tap-highlight-color:transparent}
-.tab-item.active{color:var(--gold);border-top-color:var(--gold)}
-.tab-item.ext{color:rgba(10,196,140,.7)}
-.tab-item:active{background:rgba(255,255,255,.05)}
-.tab-icon{font-size:20px;line-height:1}
+/* ══════════════════════════════════
+   📱 ボトムタブ — スタイリッシュ版
+══════════════════════════════════ */
+.tab-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  height:var(--tab-h);
+  background:rgba(15,22,50,0.97);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  z-index:200;
+  border-top:1px solid rgba(255,255,255,.06);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.tab-items{
+  display:flex;
+  height:100%;
+  align-items:center;
+  padding:0 4px;
+}
+.tab-item{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  cursor:pointer;
+  padding:8px 4px;
+  border-radius:14px;
+  margin:6px 3px;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+  color:rgba(255,255,255,.35);
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:.3px;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+  min-height:54px;
+}
+.tab-item.active{
+  color:var(--navy);
+  background:var(--gold);
+  transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(245,166,35,.4);
+}
+.tab-item.ext{
+  color:rgba(10,196,140,.75);
+}
+.tab-item.ext.active{
+  background:var(--em);
+  color:white;
+  box-shadow:0 4px 16px rgba(10,124,94,.4);
+}
+.tab-item:active{
+  transform:scale(0.93);
+}
+.tab-icon{
+  font-size:22px;
+  line-height:1;
+  transition:transform .2s;
+}
+.tab-item.active .tab-icon{
+  transform:scale(1.1);
+}
+.tab-label{
+  font-size:10px;
+  font-weight:700;
+  white-space:nowrap;
+  line-height:1;
+}
 
 /* ── CARDS ── */
 .card{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:16px}
 .card-h{padding:16px 20px 12px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
 .card-t{font-size:13px;font-weight:700;color:var(--navy)}
 .card-b{padding:16px 20px}
-
-/* ── STAT GRID ── */
 .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 .scard{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;padding:16px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
 .scard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(27,42,94,.1)}
@@ -79,54 +135,38 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .ssub{font-size:11px;color:var(--tx3);margin-top:4px}
 .schg{font-size:11px;font-weight:600;margin-top:6px}
 .schg.up{color:var(--red)}.schg.dn{color:var(--em)}
-
-/* ── PROGRESS ── */
 .pbw{background:var(--bg);border-radius:99px;height:8px;overflow:hidden}
 .pbf{height:100%;border-radius:99px;transition:width 1s ease}
-
-/* ── GRIDS ── */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-
-/* ── AXIS CARDS ── */
 .axcard{border-radius:12px;padding:16px;border:1px solid var(--bdr);background:var(--sur);transition:transform .15s}
 .axcard:hover{transform:translateY(-2px)}
 .axh{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .axic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
 .axt{font-size:13px;font-weight:700}
 .axs{font-size:11px;color:var(--tx3)}
-
-/* ── TASKS ── */
 .tasks{display:flex;flex-direction:column;gap:6px;margin-top:10px}
 .task{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;border-radius:6px;background:var(--bg);cursor:pointer;transition:background .12s}
 .task:hover{background:var(--bdr)}
 .task.done{opacity:.5;text-decoration:line-through}
 .tck{width:16px;height:16px;border-radius:4px;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;transition:all .15s}
 .tck.on{background:var(--em);border-color:var(--em);color:white}
-
-/* ── JOURNAL ── */
 .je{border-left:3px solid var(--bdr);padding:10px 14px;margin-bottom:10px;border-radius:0 8px 8px 0;background:var(--bg)}
 .je.today{border-left-color:var(--gold)}
 .jd{font-size:10px;color:var(--tx3);margin-bottom:4px;font-family:'JetBrains Mono',monospace}
 .jt{font-size:13px;line-height:1.6}
 textarea.ji{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:12px;font-size:13px;font-family:'Noto Sans JP',sans-serif;color:var(--tx);background:var(--bg);resize:vertical;min-height:80px;outline:none;transition:border-color .15s}
 textarea.ji:focus{border-color:var(--navy)}
-
-/* ── HEALTH FORM ── */
 .rrow{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
 .rf{display:flex;flex-direction:column;gap:4px}
 .rl{font-size:10px;color:var(--tx3);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 .ri{border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--navy);background:var(--bg);outline:none;transition:border-color .15s;width:100%}
 .ri:focus{border-color:var(--navy);background:white}
-
-/* ── BUTTONS ── */
 .btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;font-family:'Noto Sans JP',sans-serif;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
 .btn-p{background:var(--navy);color:white}.btn-p:hover{background:var(--navy2)}
 .btn-g{background:var(--gold);color:var(--navy)}.btn-g:hover{background:var(--gold2)}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
 .btn-gh{background:transparent;border:1px solid var(--bdr);color:var(--tx2)}.btn-gh:hover{background:var(--bg)}
-
-/* ── NOTIF PANEL ── */
 .npanel{position:absolute;top:48px;right:0;width:300px;background:white;border:1px solid var(--bdr);border-radius:12px;box-shadow:0 16px 48px rgba(27,42,94,.15);z-index:200;overflow:hidden}
 .nph{padding:12px 16px;border-bottom:1px solid var(--bdr);font-size:12px;font-weight:700;color:var(--navy)}
 .npi{padding:10px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:10px;align-items:flex-start;font-size:12px;cursor:pointer;transition:background .12s}
@@ -134,34 +174,22 @@ textarea.ji:focus{border-color:var(--navy)}
 .npdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .nptx{color:var(--tx2);line-height:1.5}
 .nptm{font-size:10px;color:var(--tx3);margin-top:2px;font-family:'JetBrains Mono',monospace}
-
-/* ── TAGS ── */
 .tag{display:inline-flex;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700}
-
-/* ── COUNTDOWN ── */
 .cdgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .cdcell{text-align:center;padding:10px 6px;border-radius:10px;border:1px solid var(--bdr);background:var(--sur)}
 .cdyr{font-size:16px;font-weight:900;font-family:'JetBrains Mono',monospace}
 .cdlbl{font-size:9px;color:var(--tx3);margin-top:2px}
-
-/* ── BAR CHART ── */
 .bchart{display:flex;gap:6px;align-items:flex-end;height:80px;padding:0 4px}
 .bcol{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
 .bar{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:4px}
 .blbl{font-size:9px;color:var(--tx3);font-family:'JetBrains Mono',monospace}
-
-/* ── PAGE HEADER ── */
 .ph{margin-bottom:20px}
 .ph h2{font-size:20px;font-weight:900;color:var(--navy)}
 .ph p{font-size:13px;color:var(--tx3);margin-top:3px}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:calc(var(--tab-h) + 12px);right:16px;background:var(--navy);color:white;padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:999;display:flex;align-items:center;gap:10px;animation:slideUp .3s ease;max-width:320px}
+.toast{position:fixed;bottom:calc(var(--tab-h) + 16px);right:16px;background:var(--navy);color:white;padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:999;display:flex;align-items:center;gap:10px;animation:slideUp .3s ease;max-width:320px}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .sdiv{height:1px;background:var(--bdr);margin:16px 0}
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--tx3);font-size:13px}
-
-/* ── CHAT LAUNCH ── */
 .chat-launch{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:24px}
 .chat-launch-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--pur));display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 12px 32px rgba(27,42,94,.25)}
 .chat-launch-title{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:6px}
@@ -172,47 +200,46 @@ textarea.ji:focus{border-color:var(--navy)}
 .chat-launch-note{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:6px}
 
 /* ════════════════════════════════
-   📱 モバイル対応 (768px以下)
+   📱 モバイル対応
 ════════════════════════════════ */
 @media (max-width: 768px) {
-  :root { --sw: 0px; }
-  .sidebar { display: none; }
-  .main { margin-left: 0; padding-bottom: var(--tab-h); }
-  .tab-nav { display: flex; }
-  .topbar { padding: 0 16px; height: 52px; }
-  .topbar-t { font-size: 14px; }
-  .topbar-d { display: none; }
-  .content { padding: 14px 12px; }
-  .sgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
-  .sval { font-size: 22px; }
-  .scard { padding: 12px; }
-  .g3 { grid-template-columns: 1fr; gap: 10px; }
-  .g2 { grid-template-columns: 1fr; gap: 10px; }
-  .rrow { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .cdgrid { gap: 4px; }
-  .cdyr { font-size: 12px; }
-  .cdlbl { font-size: 8px; }
-  .cdcell { padding: 8px 4px; }
-  .card-h { padding: 12px 14px; }
-  .card-b { padding: 12px 14px; }
-  .ph h2 { font-size: 18px; }
-  .ph { margin-bottom: 12px; }
-  .btn { padding: 12px 16px; font-size: 14px; }
-  .btn-p { width: 100%; justify-content: center; }
-  .chat-launch-btn { width: 100%; max-width: 320px; justify-content: center; padding: 18px; font-size: 16px; }
-  .chat-launch { min-height: 50vh; gap: 18px; padding: 0 4px; }
-  .chat-launch-title { font-size: 19px; }
-  .npanel { width: calc(100vw - 24px); right: -8px; }
-  .toast { left: 12px; right: 12px; max-width: none; bottom: calc(var(--tab-h) + 8px); }
-  .task { font-size: 13px; padding: 8px 10px; }
-  .tck { width: 20px; height: 20px; }
-  table { font-size: 11px; }
-  .bchart { height: 60px; }
-  .blbl { font-size: 8px; }
+  :root{--sw:0px;}
+  .sidebar{display:none;}
+  .main{margin-left:0;padding-bottom:calc(var(--tab-h) + 8px);}
+  .tab-nav{display:flex;}
+  .topbar{padding:0 16px;height:52px;}
+  .topbar-t{font-size:14px;}
+  .topbar-d{display:none;}
+  .content{padding:14px 12px;}
+  .sgrid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+  .sval{font-size:22px;}
+  .scard{padding:12px;}
+  .g3{grid-template-columns:1fr;gap:10px;}
+  .g2{grid-template-columns:1fr;gap:10px;}
+  .rrow{grid-template-columns:1fr 1fr;gap:8px;}
+  .cdgrid{gap:4px;}
+  .cdyr{font-size:12px;}
+  .cdlbl{font-size:8px;}
+  .cdcell{padding:8px 4px;}
+  .card-h{padding:12px 14px;}
+  .card-b{padding:12px 14px;}
+  .ph h2{font-size:18px;}
+  .ph{margin-bottom:12px;}
+  .btn{padding:12px 16px;font-size:14px;}
+  .btn-p{width:100%;justify-content:center;}
+  .chat-launch-btn{width:100%;max-width:320px;justify-content:center;padding:18px;font-size:16px;}
+  .chat-launch{min-height:50vh;gap:18px;padding:0 4px;}
+  .chat-launch-title{font-size:19px;}
+  .npanel{width:calc(100vw - 24px);right:-8px;}
+  .toast{left:12px;right:12px;max-width:none;bottom:calc(var(--tab-h) + 12px);}
+  .task{font-size:13px;padding:8px 10px;}
+  .tck{width:20px;height:20px;}
+  table{font-size:11px;}
+  .bchart{height:60px;}
+  .blbl{font-size:8px;}
 }
 `;
 
-// ── Helpers ────────────────────────────────────────────────────
 const DAYS = ["月","火","水","木","金","土","日"];
 const today = new Date();
 const todayStr = `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日（${DAYS[today.getDay()===0?6:today.getDay()-1]}）`;
@@ -223,7 +250,6 @@ function PBar({ value, max, color = "var(--em)" }) {
   return <div className="pbw"><div className="pbf" style={{ width: `${pct}%`, background: color }} /></div>;
 }
 
-// ── Dashboard ──────────────────────────────────────────────────
 function Dashboard({ tasks, setTasks, records, toast }) {
   const latest = records[records.length - 1] || {};
   const lw = latest.weight ?? 75.0;
@@ -312,27 +338,15 @@ function Dashboard({ tasks, setTasks, records, toast }) {
   );
 }
 
-// ── Health ─────────────────────────────────────────────────────
 function Health({ records, setRecords, toast }) {
   const [form, setForm] = useState({ weight: "", bpHigh: "", bpLow: "", walk: false });
 
   const save = async () => {
     if (!form.weight && !form.bpHigh) { toast("体重か血圧を入力してください"); return; }
-    const rec = {
-      recorded_at: todayISO,
-      weight: parseFloat(form.weight) || null,
-      bp_high: parseInt(form.bpHigh) || null,
-      bp_low: parseInt(form.bpLow) || null,
-      walked: form.walk,
-    };
+    const rec = { recorded_at: todayISO, weight: parseFloat(form.weight) || null, bp_high: parseInt(form.bpHigh) || null, bp_low: parseInt(form.bpLow) || null, walked: form.walk };
     const { data, error } = await supabase.from("health_records").insert(rec).select().single();
-    if (!error) {
-      setRecords(p => [...p, data]);
-      setForm({ weight: "", bpHigh: "", bpLow: "", walk: false });
-      toast("✅ 記録を保存しました！");
-    } else {
-      toast("エラーが発生しました");
-    }
+    if (!error) { setRecords(p => [...p, data]); setForm({ weight: "", bpHigh: "", bpLow: "", walk: false }); toast("✅ 記録を保存しました！"); }
+    else { toast("エラーが発生しました"); }
   };
 
   const maxW = Math.max(...records.map(r => r.weight || 75), 75);
@@ -341,10 +355,7 @@ function Health({ records, setRecords, toast }) {
     <div>
       <div className="ph"><h2>健康記録</h2><p>体重・血圧・運動の毎日の記録</p></div>
       <div className="card">
-        <div className="card-h">
-          <div className="card-t">今日の記録を入力</div>
-          <span className="tag" style={{ background: "#E8F8F2", color: "var(--em)" }}>{todayStr}</span>
-        </div>
+        <div className="card-h"><div className="card-t">今日の記録を入力</div><span className="tag" style={{ background: "#E8F8F2", color: "var(--em)" }}>{todayStr}</span></div>
         <div className="card-b">
           <div className="rrow">
             <div className="rf"><div className="rl">体重 (kg)</div><input className="ri" type="number" step="0.1" placeholder="74.0" value={form.weight} onChange={e => setForm({ ...form, weight: e.target.value })} /></div>
@@ -370,7 +381,7 @@ function Health({ records, setRecords, toast }) {
                 const h = Math.max(8, ((r.weight - 63) / (maxW - 63)) * 68);
                 return (
                   <div key={i} className="bcol">
-                    <div title={`${r.weight}kg`} className="bar" style={{ height: h, background: r.weight > 74.5 ? "var(--navy)" : "var(--em)" }} />
+                    <div className="bar" style={{ height: h, background: r.weight > 74.5 ? "var(--navy)" : "var(--em)" }} />
                     <div className="blbl">{(r.recorded_at || "").slice(5).replace("-", "/")}</div>
                   </div>
                 );
@@ -411,14 +422,10 @@ function Health({ records, setRecords, toast }) {
   );
 }
 
-// ── Goals ──────────────────────────────────────────────────────
 function Goals({ tasks, setTasks, toast }) {
   const toggle = async (axis, id, cur) => {
     const { error } = await supabase.from("tasks").update({ done: !cur }).eq("id", id);
-    if (!error) {
-      setTasks(p => ({ ...p, [axis]: p[axis].map(t => t.id === id ? { ...t, done: !cur } : t) }));
-      toast("タスク更新！");
-    }
+    if (!error) { setTasks(p => ({ ...p, [axis]: p[axis].map(t => t.id === id ? { ...t, done: !cur } : t) })); toast("タスク更新！"); }
   };
 
   const goals = [
@@ -489,7 +496,6 @@ function Goals({ tasks, setTasks, toast }) {
   );
 }
 
-// ── Chat（ジャンプ方式）────────────────────────────────────────
 function Chat() {
   return (
     <div>
@@ -498,30 +504,17 @@ function Chat() {
         <div className="chat-launch-icon">🤖</div>
         <div>
           <div className="chat-launch-title">Yoshioナイスプロジェクト秘書</div>
-          <div className="chat-launch-sub">
-            バックキャスト思考で<br />
-            今日の最善の行動を一緒に考えます。<br />
-            ボタンをタップして秘書を起動してください。
-          </div>
+          <div className="chat-launch-sub">バックキャスト思考で<br />今日の最善の行動を一緒に考えます。<br />ボタンをタップして秘書を起動してください。</div>
         </div>
-        <button
-          className="chat-launch-btn"
-          onClick={() => window.open(CLAUDE_PROJECT_URL, "_blank")}
-        >
-          <span>🚀</span>
-          <span>秘書AIを起動する</span>
-          <span style={{ fontSize: 11, opacity: 0.7 }}>↗</span>
+        <button className="chat-launch-btn" onClick={() => window.open(CLAUDE_PROJECT_URL, "_blank")}>
+          <span>🚀</span><span>秘書AIを起動する</span><span style={{ fontSize: 11, opacity: 0.7 }}>↗</span>
         </button>
-        <div className="chat-launch-note">
-          <span>🔒</span>
-          <span>Claude.aiが別タブで開きます</span>
-        </div>
+        <div className="chat-launch-note"><span>🔒</span><span>Claude.aiが別タブで開きます</span></div>
       </div>
     </div>
   );
 }
 
-// ── Journal ────────────────────────────────────────────────────
 function Journal({ journals, setJournals, toast }) {
   const [text, setText] = useState("");
   const [mood, setMood] = useState("😊");
@@ -530,21 +523,15 @@ function Journal({ journals, setJournals, toast }) {
   const save = async () => {
     if (!text.trim()) { toast("内容を入力してください"); return; }
     const { data, error } = await supabase.from("journals").insert({ recorded_at: todayISO, mood, content: text }).select().single();
-    if (!error) {
-      setJournals(p => [data, ...p]);
-      setText(""); setMood("😊");
-      toast("✅ 日誌を保存しました！");
-    } else { toast("エラーが発生しました"); }
+    if (!error) { setJournals(p => [data, ...p]); setText(""); setMood("😊"); toast("✅ 日誌を保存しました！"); }
+    else { toast("エラーが発生しました"); }
   };
 
   return (
     <div>
       <div className="ph"><h2>日誌</h2><p>毎日の振り返り・気づき・感謝を記録する</p></div>
       <div className="card">
-        <div className="card-h">
-          <div className="card-t">今日の日誌</div>
-          <span className="tag" style={{ background: "#FFFDF5", color: "var(--gold)", border: "1px solid var(--gold)" }}>{todayStr}</span>
-        </div>
+        <div className="card-h"><div className="card-t">今日の日誌</div><span className="tag" style={{ background: "#FFFDF5", color: "var(--gold)", border: "1px solid var(--gold)" }}>{todayStr}</span></div>
         <div className="card-b">
           <div style={{ marginBottom: 12 }}>
             <div style={{ fontSize: 11, color: "var(--tx3)", fontWeight: 700, marginBottom: 8, textTransform: "uppercase" }}>今日の気分</div>
@@ -578,7 +565,6 @@ function Journal({ journals, setJournals, toast }) {
   );
 }
 
-// ── Main App ───────────────────────────────────────────────────
 const NOTIFS = [
   { id: 1, color: "#F5A623", text: "今日の早歩きはまだです！夕方17〜18時がおすすめ", time: "17:00", unread: true },
   { id: 2, color: "#0A7C5E", text: "体重記録を忘れずに。今週の測定日です", time: "07:00", unread: true },
@@ -623,12 +609,8 @@ export default function App() {
   }, []);
 
   const handleNav = (item) => {
-    if (item.external) {
-      window.open(item.external, "_blank");
-    } else {
-      setPage(item.id);
-      setShowNotif(false);
-    }
+    if (item.external) { window.open(item.external, "_blank"); }
+    else { setPage(item.id); setShowNotif(false); }
   };
 
   const unread = NOTIFS.filter(n => n.unread).length;
@@ -638,7 +620,7 @@ export default function App() {
       <style>{S}</style>
       <div className="shell">
 
-        {/* ── デスクトップ サイドバー ── */}
+        {/* デスクトップ サイドバー */}
         <div className="sidebar">
           <div className="slogo">
             <div className="slogo-t">Yoshio Nice<br />Project</div>
@@ -647,11 +629,7 @@ export default function App() {
           <div className="snav">
             <div className="snav-lbl">メニュー</div>
             {NAV_ITEMS.map(item => (
-              <div
-                key={item.id}
-                className={`nitem ${!item.external && page === item.id ? "active" : ""} ${item.external ? "nitem-ext" : ""}`}
-                onClick={() => handleNav(item)}
-              >
+              <div key={item.id} className={`nitem ${!item.external && page === item.id ? "active" : ""} ${item.external ? "nitem-ext" : ""}`} onClick={() => handleNav(item)}>
                 <span>{item.icon}</span>
                 <span>{SIDEBAR_LABELS[item.id]}</span>
                 {item.external && <span className="ext-badge">↗ CLAUDE</span>}
@@ -661,7 +639,7 @@ export default function App() {
           <div className="sfooter"><strong>成毛喜男（Yoshio）</strong><span>51歳 ・ 京都府与謝野町</span></div>
         </div>
 
-        {/* ── メインエリア ── */}
+        {/* メインエリア */}
         <div className="main">
           <div className="topbar">
             <div className="topbar-t">{TITLES[page]}</div>
@@ -684,7 +662,6 @@ export default function App() {
               )}
             </div>
           </div>
-
           <div className="content">
             {loading ? <div className="loading">データを読み込み中...</div> : (
               <>
@@ -698,7 +675,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* ── スマホ ボトムタブナビ ── */}
+        {/* スマホ ボトムタブ */}
         <nav className="tab-nav">
           <div className="tab-items">
             {NAV_ITEMS.map(item => (
@@ -708,7 +685,7 @@ export default function App() {
                 onClick={() => handleNav(item)}
               >
                 <div className="tab-icon">{item.icon}</div>
-                <div>{item.label}</div>
+                <div className="tab-label">{item.label}</div>
               </div>
             ))}
           </div>
