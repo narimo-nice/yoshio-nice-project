@@ -6,6 +6,7 @@ const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const CLAUDE_PROJECT_URL = "https://claude.ai/project/019dd12c-f63f-7424-8364-3ac7511011c3";
+const ANTHROPIC_CONSOLE_URL = "https://console.anthropic.com/settings/usage";
 
 const S = `
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -19,10 +20,9 @@ const S = `
 }
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
-
 .shell{display:flex;min-height:100vh}
 
-/* ── SIDEBAR (デスクトップ) ── */
+/* ── SIDEBAR ── */
 .sidebar{width:var(--sw);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
 .slogo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
 .slogo-t{font-family:'DM Serif Display',serif;font-size:15px;color:var(--gold);line-height:1.3}
@@ -34,8 +34,25 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .nitem.active{border-left-color:var(--gold);background:rgba(245,166,35,.1);color:var(--gold);font-weight:700}
 .nitem-ext:hover{background:rgba(10,124,94,.1);color:var(--em2)}
 .ext-badge{font-size:9px;opacity:0.6;margin-left:auto;background:rgba(10,124,94,.2);color:var(--em2);padding:2px 5px;border-radius:4px}
-.sfooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.3)}
+
+/* ── サイドバーフッター ── */
+.sfooter{padding:16px 20px 12px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.3)}
 .sfooter strong{color:rgba(255,255,255,.6);display:block;margin-bottom:2px}
+.api-btn{
+  display:flex;align-items:center;gap:7px;
+  margin-top:12px;padding:9px 12px;
+  background:rgba(245,166,35,.12);
+  border:1px solid rgba(245,166,35,.25);
+  border-radius:8px;cursor:pointer;
+  transition:all .15s;width:100%;
+  color:var(--gold);font-size:11px;font-weight:700;
+  font-family:'Noto Sans JP',sans-serif;
+  text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.api-btn:hover{background:rgba(245,166,35,.22);border-color:rgba(245,166,35,.5);}
+.api-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 
 /* ── MAIN ── */
 .main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
@@ -49,76 +66,38 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--pur));display:flex;align-items:center;justify-content:center;font-size:13px;color:white;font-weight:700;cursor:pointer}
 .content{padding:24px 28px;flex:1}
 
-/* ══════════════════════════════════
-   📱 ボトムタブ — スタイリッシュ版
-══════════════════════════════════ */
-.tab-nav{
+/* ── ボトムタブ ── */
+.tab-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--tab-h);background:rgba(15,22,50,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:200;border-top:1px solid rgba(255,255,255,.06);padding-bottom:env(safe-area-inset-bottom)}
+.tab-items{display:flex;height:100%;align-items:center;padding:0 4px}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:8px 4px;border-radius:14px;margin:6px 3px;transition:all .2s cubic-bezier(.34,1.56,.64,1);color:rgba(255,255,255,.35);font-size:10px;font-weight:500;letter-spacing:.3px;-webkit-tap-highlight-color:transparent;min-height:54px}
+.tab-item.active{color:var(--navy);background:var(--gold);transform:translateY(-2px);box-shadow:0 4px 16px rgba(245,166,35,.4)}
+.tab-item.ext{color:rgba(10,196,140,.75)}
+.tab-item:active{transform:scale(0.93)}
+.tab-icon{font-size:22px;line-height:1;transition:transform .2s}
+.tab-item.active .tab-icon{transform:scale(1.1)}
+.tab-label{font-size:10px;font-weight:700;white-space:nowrap;line-height:1}
+
+/* ── スマホ用APIボタン（ボトムタブの上） ── */
+.mobile-api-bar{
   display:none;
-  position:fixed;bottom:0;left:0;right:0;
-  height:var(--tab-h);
-  background:rgba(15,22,50,0.97);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  z-index:200;
-  border-top:1px solid rgba(255,255,255,.06);
-  padding-bottom:env(safe-area-inset-bottom);
+  position:fixed;
+  bottom:var(--tab-h);
+  left:0;right:0;
+  padding:6px 12px;
+  background:rgba(15,22,50,0.95);
+  border-top:1px solid rgba(245,166,35,.15);
+  z-index:199;
 }
-.tab-items{
-  display:flex;
-  height:100%;
-  align-items:center;
-  padding:0 4px;
-}
-.tab-item{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:5px;
-  cursor:pointer;
-  padding:8px 4px;
-  border-radius:14px;
-  margin:6px 3px;
-  transition:all .2s cubic-bezier(.34,1.56,.64,1);
-  color:rgba(255,255,255,.35);
-  font-size:10px;
-  font-weight:500;
-  letter-spacing:.3px;
+.mobile-api-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:7px 12px;
+  background:rgba(245,166,35,.12);
+  border:1px solid rgba(245,166,35,.2);
+  border-radius:8px;
+  color:var(--gold);font-size:11px;font-weight:700;
+  font-family:'Noto Sans JP',sans-serif;
+  text-decoration:none;width:100%;
   -webkit-tap-highlight-color:transparent;
-  position:relative;
-  min-height:54px;
-}
-.tab-item.active{
-  color:var(--navy);
-  background:var(--gold);
-  transform:translateY(-2px);
-  box-shadow:0 4px 16px rgba(245,166,35,.4);
-}
-.tab-item.ext{
-  color:rgba(10,196,140,.75);
-}
-.tab-item.ext.active{
-  background:var(--em);
-  color:white;
-  box-shadow:0 4px 16px rgba(10,124,94,.4);
-}
-.tab-item:active{
-  transform:scale(0.93);
-}
-.tab-icon{
-  font-size:22px;
-  line-height:1;
-  transition:transform .2s;
-}
-.tab-item.active .tab-icon{
-  transform:scale(1.1);
-}
-.tab-label{
-  font-size:10px;
-  font-weight:700;
-  white-space:nowrap;
-  line-height:1;
 }
 
 /* ── CARDS ── */
@@ -205,8 +184,9 @@ textarea.ji:focus{border-color:var(--navy)}
 @media (max-width: 768px) {
   :root{--sw:0px;}
   .sidebar{display:none;}
-  .main{margin-left:0;padding-bottom:calc(var(--tab-h) + 8px);}
+  .main{margin-left:0;padding-bottom:calc(var(--tab-h) + 36px);}
   .tab-nav{display:flex;}
+  .mobile-api-bar{display:block;}
   .topbar{padding:0 16px;height:52px;}
   .topbar-t{font-size:14px;}
   .topbar-d{display:none;}
@@ -231,7 +211,7 @@ textarea.ji:focus{border-color:var(--navy)}
   .chat-launch{min-height:50vh;gap:18px;padding:0 4px;}
   .chat-launch-title{font-size:19px;}
   .npanel{width:calc(100vw - 24px);right:-8px;}
-  .toast{left:12px;right:12px;max-width:none;bottom:calc(var(--tab-h) + 12px);}
+  .toast{left:12px;right:12px;max-width:none;bottom:calc(var(--tab-h) + 44px);}
   .task{font-size:13px;padding:8px 10px;}
   .tck{width:20px;height:20px;}
   table{font-size:11px;}
@@ -620,7 +600,7 @@ export default function App() {
       <style>{S}</style>
       <div className="shell">
 
-        {/* デスクトップ サイドバー */}
+        {/* ── デスクトップ サイドバー ── */}
         <div className="sidebar">
           <div className="slogo">
             <div className="slogo-t">Yoshio Nice<br />Project</div>
@@ -636,10 +616,25 @@ export default function App() {
               </div>
             ))}
           </div>
-          <div className="sfooter"><strong>成毛喜男（Yoshio）</strong><span>51歳 ・ 京都府与謝野町</span></div>
+
+          {/* ── サイドバーフッター ── */}
+          <div className="sfooter">
+            <strong>成毛喜男（Yoshio）</strong>
+            <span>51歳 ・ 京都府与謝野町</span>
+            <a
+              className="api-btn"
+              href={ANTHROPIC_CONSOLE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="api-dot" />
+              <span>💰 API使用料を確認</span>
+              <span style={{ marginLeft: "auto", fontSize: 9, opacity: 0.6 }}>↗</span>
+            </a>
+          </div>
         </div>
 
-        {/* メインエリア */}
+        {/* ── メインエリア ── */}
         <div className="main">
           <div className="topbar">
             <div className="topbar-t">{TITLES[page]}</div>
@@ -662,6 +657,7 @@ export default function App() {
               )}
             </div>
           </div>
+
           <div className="content">
             {loading ? <div className="loading">データを読み込み中...</div> : (
               <>
@@ -675,7 +671,22 @@ export default function App() {
           </div>
         </div>
 
-        {/* スマホ ボトムタブ */}
+        {/* ── スマホ：APIボタンバー（タブの上） ── */}
+        <a
+          className="mobile-api-bar"
+          href={ANTHROPIC_CONSOLE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none" }}
+        >
+          <div className="mobile-api-btn">
+            <div className="api-dot" />
+            <span>💰 API使用料を確認する</span>
+            <span style={{ marginLeft: "auto", fontSize: 10, opacity: 0.6 }}>↗ Anthropicコンソール</span>
+          </div>
+        </a>
+
+        {/* ── スマホ ボトムタブ ── */}
         <nav className="tab-nav">
           <div className="tab-items">
             {NAV_ITEMS.map(item => (
