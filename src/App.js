@@ -18,10 +18,15 @@ const S = `
   --gold:#F5A623;--gold2:#FFD166;--pur:#7B5EA7;--red:#C0392B;
   --bg:#F0F4FF;--sur:#FFFFFF;--sur2:#F4F6FC;--bdr:#DDE3F0;
   --tx:#1B2A5E;--tx2:#4A5568;--tx3:#8896B0;--sw:220px;
+  --tab-h:64px;
 }
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+
+/* ── SHELL ── */
 .shell{display:flex;min-height:100vh}
+
+/* ── SIDEBAR (デスクトップ) ── */
 .sidebar{width:var(--sw);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto}
 .slogo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
 .slogo-t{font-family:'DM Serif Display',serif;font-size:15px;color:var(--gold);line-height:1.3}
@@ -36,6 +41,8 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .ext-badge{font-size:9px;opacity:0.6;margin-left:auto;background:rgba(10,124,94,.2);color:var(--em2);padding:2px 5px;border-radius:4px;letter-spacing:.5px}
 .sfooter{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.3)}
 .sfooter strong{color:rgba(255,255,255,.6);display:block;margin-bottom:2px}
+
+/* ── MAIN ── */
 .main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
 .topbar{background:var(--sur);border-bottom:1px solid var(--bdr);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90}
 .topbar-t{font-size:15px;font-weight:700;color:var(--navy)}
@@ -46,10 +53,23 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .nbadge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--red);color:white;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace}
 .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--pur));display:flex;align-items:center;justify-content:center;font-size:13px;color:white;font-weight:700;cursor:pointer}
 .content{padding:24px 28px;flex:1}
+
+/* ── BOTTOM TAB NAV (スマホ) ── */
+.tab-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--tab-h);background:var(--navy);z-index:200;border-top:1px solid rgba(255,255,255,.1);padding-bottom:env(safe-area-inset-bottom)}
+.tab-items{display:flex;height:100%}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,.45);border-top:2px solid transparent;font-size:10px;font-weight:500;-webkit-tap-highlight-color:transparent}
+.tab-item.active{color:var(--gold);border-top-color:var(--gold)}
+.tab-item.ext{color:rgba(10,196,140,.7)}
+.tab-item:active{background:rgba(255,255,255,.05)}
+.tab-icon{font-size:20px;line-height:1}
+
+/* ── CARDS ── */
 .card{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:16px}
 .card-h{padding:16px 20px 12px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
 .card-t{font-size:13px;font-weight:700;color:var(--navy)}
 .card-b{padding:16px 20px}
+
+/* ── STAT GRID ── */
 .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 .scard{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;padding:16px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
 .scard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(27,42,94,.1)}
@@ -59,38 +79,54 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx)}
 .ssub{font-size:11px;color:var(--tx3);margin-top:4px}
 .schg{font-size:11px;font-weight:600;margin-top:6px}
 .schg.up{color:var(--red)}.schg.dn{color:var(--em)}
+
+/* ── PROGRESS ── */
 .pbw{background:var(--bg);border-radius:99px;height:8px;overflow:hidden}
 .pbf{height:100%;border-radius:99px;transition:width 1s ease}
+
+/* ── GRIDS ── */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ── AXIS CARDS ── */
 .axcard{border-radius:12px;padding:16px;border:1px solid var(--bdr);background:var(--sur);transition:transform .15s}
 .axcard:hover{transform:translateY(-2px)}
 .axh{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.axic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:16px}
+.axic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
 .axt{font-size:13px;font-weight:700}
 .axs{font-size:11px;color:var(--tx3)}
+
+/* ── TASKS ── */
 .tasks{display:flex;flex-direction:column;gap:6px;margin-top:10px}
 .task{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;border-radius:6px;background:var(--bg);cursor:pointer;transition:background .12s}
 .task:hover{background:var(--bdr)}
 .task.done{opacity:.5;text-decoration:line-through}
 .tck{width:16px;height:16px;border-radius:4px;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;transition:all .15s}
 .tck.on{background:var(--em);border-color:var(--em);color:white}
+
+/* ── JOURNAL ── */
 .je{border-left:3px solid var(--bdr);padding:10px 14px;margin-bottom:10px;border-radius:0 8px 8px 0;background:var(--bg)}
 .je.today{border-left-color:var(--gold)}
 .jd{font-size:10px;color:var(--tx3);margin-bottom:4px;font-family:'JetBrains Mono',monospace}
 .jt{font-size:13px;line-height:1.6}
 textarea.ji{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:12px;font-size:13px;font-family:'Noto Sans JP',sans-serif;color:var(--tx);background:var(--bg);resize:vertical;min-height:80px;outline:none;transition:border-color .15s}
 textarea.ji:focus{border-color:var(--navy)}
+
+/* ── HEALTH FORM ── */
 .rrow{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
 .rf{display:flex;flex-direction:column;gap:4px}
 .rl{font-size:10px;color:var(--tx3);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 .ri{border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--navy);background:var(--bg);outline:none;transition:border-color .15s;width:100%}
 .ri:focus{border-color:var(--navy);background:white}
+
+/* ── BUTTONS ── */
 .btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;font-family:'Noto Sans JP',sans-serif;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
 .btn-p{background:var(--navy);color:white}.btn-p:hover{background:var(--navy2)}
 .btn-g{background:var(--gold);color:var(--navy)}.btn-g:hover{background:var(--gold2)}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:6px}
 .btn-gh{background:transparent;border:1px solid var(--bdr);color:var(--tx2)}.btn-gh:hover{background:var(--bg)}
+
+/* ── NOTIF PANEL ── */
 .npanel{position:absolute;top:48px;right:0;width:300px;background:white;border:1px solid var(--bdr);border-radius:12px;box-shadow:0 16px 48px rgba(27,42,94,.15);z-index:200;overflow:hidden}
 .nph{padding:12px 16px;border-bottom:1px solid var(--bdr);font-size:12px;font-weight:700;color:var(--navy)}
 .npi{padding:10px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:10px;align-items:flex-start;font-size:12px;cursor:pointer;transition:background .12s}
@@ -98,29 +134,82 @@ textarea.ji:focus{border-color:var(--navy)}
 .npdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .nptx{color:var(--tx2);line-height:1.5}
 .nptm{font-size:10px;color:var(--tx3);margin-top:2px;font-family:'JetBrains Mono',monospace}
+
+/* ── TAGS ── */
 .tag{display:inline-flex;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700}
+
+/* ── COUNTDOWN ── */
 .cdgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .cdcell{text-align:center;padding:10px 6px;border-radius:10px;border:1px solid var(--bdr);background:var(--sur)}
 .cdyr{font-size:16px;font-weight:900;font-family:'JetBrains Mono',monospace}
 .cdlbl{font-size:9px;color:var(--tx3);margin-top:2px}
+
+/* ── BAR CHART ── */
 .bchart{display:flex;gap:6px;align-items:flex-end;height:80px;padding:0 4px}
 .bcol{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
 .bar{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:4px}
 .blbl{font-size:9px;color:var(--tx3);font-family:'JetBrains Mono',monospace}
+
+/* ── PAGE HEADER ── */
 .ph{margin-bottom:20px}
 .ph h2{font-size:20px;font-weight:900;color:var(--navy)}
 .ph p{font-size:13px;color:var(--tx3);margin-top:3px}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:white;padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:999;display:flex;align-items:center;gap:10px;animation:slideUp .3s ease;max-width:320px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(var(--tab-h) + 12px);right:16px;background:var(--navy);color:white;padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:999;display:flex;align-items:center;gap:10px;animation:slideUp .3s ease;max-width:320px}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .sdiv{height:1px;background:var(--bdr);margin:16px 0}
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--tx3);font-size:13px}
+
+/* ── CHAT LAUNCH ── */
 .chat-launch{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:24px}
 .chat-launch-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--pur));display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 12px 32px rgba(27,42,94,.25)}
 .chat-launch-title{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:6px}
-.chat-launch-sub{font-size:13px;color:var(--tx3);line-height:1.7;max-width:340px}
-.chat-launch-btn{padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;border:none;cursor:pointer;background:linear-gradient(135deg,var(--navy),var(--pur));color:white;display:inline-flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(27,42,94,.3);transition:all .2s}
+.chat-launch-sub{font-size:13px;color:var(--tx3);line-height:1.7;max-width:300px}
+.chat-launch-btn{padding:16px 32px;border-radius:14px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;border:none;cursor:pointer;background:linear-gradient(135deg,var(--navy),var(--pur));color:white;display:inline-flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(27,42,94,.3);transition:all .2s;-webkit-tap-highlight-color:transparent}
 .chat-launch-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(27,42,94,.4)}
+.chat-launch-btn:active{transform:translateY(0)}
 .chat-launch-note{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:6px}
+
+/* ════════════════════════════════
+   📱 モバイル対応 (768px以下)
+════════════════════════════════ */
+@media (max-width: 768px) {
+  :root { --sw: 0px; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding-bottom: var(--tab-h); }
+  .tab-nav { display: flex; }
+  .topbar { padding: 0 16px; height: 52px; }
+  .topbar-t { font-size: 14px; }
+  .topbar-d { display: none; }
+  .content { padding: 14px 12px; }
+  .sgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+  .sval { font-size: 22px; }
+  .scard { padding: 12px; }
+  .g3 { grid-template-columns: 1fr; gap: 10px; }
+  .g2 { grid-template-columns: 1fr; gap: 10px; }
+  .rrow { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cdgrid { gap: 4px; }
+  .cdyr { font-size: 12px; }
+  .cdlbl { font-size: 8px; }
+  .cdcell { padding: 8px 4px; }
+  .card-h { padding: 12px 14px; }
+  .card-b { padding: 12px 14px; }
+  .ph h2 { font-size: 18px; }
+  .ph { margin-bottom: 12px; }
+  .btn { padding: 12px 16px; font-size: 14px; }
+  .btn-p { width: 100%; justify-content: center; }
+  .chat-launch-btn { width: 100%; max-width: 320px; justify-content: center; padding: 18px; font-size: 16px; }
+  .chat-launch { min-height: 50vh; gap: 18px; padding: 0 4px; }
+  .chat-launch-title { font-size: 19px; }
+  .npanel { width: calc(100vw - 24px); right: -8px; }
+  .toast { left: 12px; right: 12px; max-width: none; bottom: calc(var(--tab-h) + 8px); }
+  .task { font-size: 13px; padding: 8px 10px; }
+  .tck { width: 20px; height: 20px; }
+  table { font-size: 11px; }
+  .bchart { height: 60px; }
+  .blbl { font-size: 8px; }
+}
 `;
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -162,20 +251,20 @@ function Dashboard({ tasks, setTasks, records, toast }) {
       <div className="sgrid">
         {[
           { lbl: "現在体重", val: lw, unit: "kg", sub: `目標63kgまで -${(lw-63).toFixed(1)}kg`, chg: `-${diff}kg 減量中`, cd: "dn", ac: "var(--em)" },
-          { lbl: "最新血圧（上）", val: latest.bp_high ?? 140, unit: "", sub: "目標：正常域（130以下）", chg: "要医師相談 ⚠️", cd: "up", ac: "var(--red)" },
+          { lbl: "最新血圧（上）", val: latest.bp_high ?? 140, unit: "", sub: "目標：正常域", chg: "要医師相談 ⚠️", cd: "up", ac: "var(--red)" },
           { lbl: "今日のタスク", val: `${done}/${total}`, unit: "", sub: "完了済み", chg: done === total ? "全完了！" : `残り${total - done}件`, cd: done === total ? "dn" : "up", ac: "var(--gold)" },
-          { lbl: "2030年まで", val: "約4年", unit: "", sub: "町議会議員 出馬まで", chg: "", ac: "var(--pur)" },
+          { lbl: "2030年まで", val: "約4年", unit: "", sub: "町議会議員まで", chg: "", ac: "var(--pur)" },
         ].map((s, i) => (
           <div key={i} className="scard">
             <div className="sacc" style={{ background: s.ac }} />
             <div className="slbl">{s.lbl}</div>
-            <div className="sval" style={{ color: s.ac }}>{s.val}<span style={{ fontSize: 14, fontFamily: "Noto Sans JP", fontWeight: 400 }}>{s.unit}</span></div>
+            <div className="sval" style={{ color: s.ac }}>{s.val}<span style={{ fontSize: 13, fontFamily: "Noto Sans JP", fontWeight: 400 }}>{s.unit}</span></div>
             <div className="ssub">{s.sub}</div>
             {s.chg && <div className={`schg ${s.cd}`}>{s.chg}</div>}
           </div>
         ))}
       </div>
-      <div className="g3" style={{ marginBottom: 20 }}>
+      <div className="g3" style={{ marginBottom: 16 }}>
         {axes.map(ax => (
           <div key={ax.key} className="axcard">
             <div className="axh">
@@ -213,7 +302,7 @@ function Dashboard({ tasks, setTasks, records, toast }) {
               <div key={y.yr} className="cdcell" style={y.now ? { borderColor: y.c, background: "#FFFDF5" } : {}}>
                 <div className="cdyr" style={{ color: y.c }}>{y.yr}</div>
                 <div className="cdlbl">{y.lbl}</div>
-                {y.now && <div style={{ fontSize: 9, color: "var(--gold)", marginTop: 3, fontWeight: 700 }}>← 今ここ</div>}
+                {y.now && <div style={{ fontSize: 8, color: "var(--gold)", marginTop: 2, fontWeight: 700 }}>← 今ここ</div>}
               </div>
             ))}
           </div>
@@ -298,16 +387,16 @@ function Health({ records, setRecords, toast }) {
         </div>
         <div className="card">
           <div className="card-h"><div className="card-t">最近の記録一覧</div></div>
-          <div className="card-b" style={{ padding: 0 }}>
+          <div className="card-b" style={{ padding: 0, overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-              <thead><tr style={{ background: "var(--bg)" }}>{["日付", "体重", "血圧(上/下)", "早歩き"].map(h => <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "var(--tx3)", fontSize: 10, textTransform: "uppercase" }}>{h}</th>)}</tr></thead>
+              <thead><tr style={{ background: "var(--bg)" }}>{["日付", "体重", "血圧", "早歩き"].map(h => <th key={h} style={{ padding: "8px 10px", textAlign: "left", fontWeight: 700, color: "var(--tx3)", fontSize: 10, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>)}</tr></thead>
               <tbody>
                 {[...records].reverse().slice(0, 7).map((r, i) => (
                   <tr key={i} style={{ borderTop: "1px solid var(--bdr)" }}>
-                    <td style={{ padding: "8px 12px", color: "var(--tx2)" }}>{(r.recorded_at || "").slice(5).replace("-", "/")}</td>
-                    <td style={{ padding: "8px 12px", fontFamily: "JetBrains Mono", fontWeight: 700, color: "var(--navy)" }}>{r.weight}</td>
-                    <td style={{ padding: "8px 12px", fontFamily: "JetBrains Mono", color: r.bp_high >= 140 ? "var(--red)" : "var(--em)", fontWeight: 600 }}>{r.bp_high}/{r.bp_low}</td>
-                    <td style={{ padding: "8px 12px" }}>{r.walked ? "✅" : "—"}</td>
+                    <td style={{ padding: "8px 10px", color: "var(--tx2)", whiteSpace: "nowrap" }}>{(r.recorded_at || "").slice(5).replace("-", "/")}</td>
+                    <td style={{ padding: "8px 10px", fontFamily: "JetBrains Mono", fontWeight: 700, color: "var(--navy)" }}>{r.weight}</td>
+                    <td style={{ padding: "8px 10px", fontFamily: "JetBrains Mono", color: r.bp_high >= 140 ? "var(--red)" : "var(--em)", fontWeight: 600 }}>{r.bp_high}/{r.bp_low}</td>
+                    <td style={{ padding: "8px 10px" }}>{r.walked ? "✅" : "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -383,12 +472,12 @@ function Goals({ tasks, setTasks, toast }) {
               <div style={{ fontSize: 11, fontWeight: 700, color: "var(--tx3)", marginBottom: 8, textTransform: "uppercase" }}>マイルストーン</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {g.milestones.map((m, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px", background: "var(--bg)", borderRadius: 6, fontSize: 12 }}>
+                  <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 10px", background: "var(--bg)", borderRadius: 6, fontSize: 12, gap: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: g.color, opacity: 0.6 }} />
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: g.color, opacity: 0.6, flexShrink: 0 }} />
                       <span>{m.text}</span>
                     </div>
-                    <span style={{ fontSize: 10, color: g.color, fontWeight: 700, background: g.bg, padding: "2px 8px", borderRadius: 99, whiteSpace: "nowrap", marginLeft: 8 }}>{m.target}</span>
+                    <span style={{ fontSize: 10, color: g.color, fontWeight: 700, background: g.bg, padding: "2px 8px", borderRadius: 99, whiteSpace: "nowrap" }}>{m.target}</span>
                   </div>
                 ))}
               </div>
@@ -412,7 +501,7 @@ function Chat() {
           <div className="chat-launch-sub">
             バックキャスト思考で<br />
             今日の最善の行動を一緒に考えます。<br />
-            ボタンをクリックして秘書を起動してください。
+            ボタンをタップして秘書を起動してください。
           </div>
         </div>
         <button
@@ -459,14 +548,14 @@ function Journal({ journals, setJournals, toast }) {
         <div className="card-b">
           <div style={{ marginBottom: 12 }}>
             <div style={{ fontSize: 11, color: "var(--tx3)", fontWeight: 700, marginBottom: 8, textTransform: "uppercase" }}>今日の気分</div>
-            <div style={{ display: "flex", gap: 8 }}>
-              {moods.map(m => <button key={m} onClick={() => setMood(m)} style={{ width: 36, height: 36, borderRadius: 8, border: `2px solid ${mood === m ? "var(--gold)" : "var(--bdr)"}`, background: mood === m ? "#FFFDF5" : "var(--bg)", fontSize: 18, cursor: "pointer" }}>{m}</button>)}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {moods.map(m => <button key={m} onClick={() => setMood(m)} style={{ width: 44, height: 44, borderRadius: 10, border: `2px solid ${mood === m ? "var(--gold)" : "var(--bdr)"}`, background: mood === m ? "#FFFDF5" : "var(--bg)", fontSize: 22, cursor: "pointer" }}>{m}</button>)}
             </div>
           </div>
           <textarea className="ji" placeholder="今日の振り返りを書きましょう..." value={text} onChange={e => setText(e.target.value)} />
           <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
             <button className="btn btn-p" onClick={save}>保存する</button>
-            <button className="btn btn-gh" onClick={() => setText("")}>クリア</button>
+            <button className="btn btn-gh" onClick={() => setText("")} style={{ flex: "0 0 auto" }}>クリア</button>
           </div>
         </div>
       </div>
@@ -478,7 +567,7 @@ function Journal({ journals, setJournals, toast }) {
             <div key={j.id || i} className={`je ${i === 0 ? "today" : ""}`}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                 <div className="jd">{j.recorded_at}</div>
-                <div style={{ fontSize: 18 }}>{j.mood}</div>
+                <div style={{ fontSize: 20 }}>{j.mood}</div>
               </div>
               <div className="jt">{j.content}</div>
             </div>
@@ -495,6 +584,17 @@ const NOTIFS = [
   { id: 2, color: "#0A7C5E", text: "体重記録を忘れずに。今週の測定日です", time: "07:00", unread: true },
   { id: 3, color: "#7B5EA7", text: "Facebook投稿日（水曜日）です！", time: "09:00", unread: false },
 ];
+
+const NAV_ITEMS = [
+  { id: "dashboard", label: "ホーム",  icon: "🏠" },
+  { id: "health",    label: "健康",    icon: "📊" },
+  { id: "goals",     label: "目標",    icon: "🎯" },
+  { id: "chat",      label: "秘書AI",  icon: "🤖", external: CLAUDE_PROJECT_URL },
+  { id: "journal",   label: "日誌",    icon: "📝" },
+];
+
+const SIDEBAR_LABELS = { dashboard: "ダッシュボード", health: "健康記録", goals: "目標トラッカー", chat: "秘書AIチャット", journal: "日誌" };
+const TITLES = { dashboard: "ダッシュボード", health: "健康記録", goals: "目標トラッカー", chat: "秘書AIチャット", journal: "日誌" };
 
 export default function App() {
   const [page, setPage] = useState("dashboard");
@@ -514,13 +614,7 @@ export default function App() {
         supabase.from("health_records").select("*").order("recorded_at").limit(14),
         supabase.from("journals").select("*").order("recorded_at", { ascending: false }).limit(10),
       ]);
-      if (tr) {
-        setTasks({
-          body: tr.filter(t => t.axis === "body"),
-          town: tr.filter(t => t.axis === "town"),
-          maddock: tr.filter(t => t.axis === "maddock"),
-        });
-      }
+      if (tr) setTasks({ body: tr.filter(t => t.axis === "body"), town: tr.filter(t => t.axis === "town"), maddock: tr.filter(t => t.axis === "maddock") });
       if (hr) setRecords(hr);
       if (jr) setJournals(jr);
       setLoading(false);
@@ -528,21 +622,23 @@ export default function App() {
     load();
   }, []);
 
-  const navItems = [
-    { id: "dashboard", label: "ダッシュボード", icon: "🏠" },
-    { id: "health", label: "健康記録", icon: "📊" },
-    { id: "goals", label: "目標トラッカー", icon: "🎯" },
-    { id: "chat", label: "秘書AIチャット", icon: "🤖", external: CLAUDE_PROJECT_URL },
-    { id: "journal", label: "日誌", icon: "📝" },
-  ];
+  const handleNav = (item) => {
+    if (item.external) {
+      window.open(item.external, "_blank");
+    } else {
+      setPage(item.id);
+      setShowNotif(false);
+    }
+  };
 
-  const titles = { dashboard: "ダッシュボード", health: "健康記録", goals: "目標トラッカー", chat: "秘書AIチャット", journal: "日誌" };
   const unread = NOTIFS.filter(n => n.unread).length;
 
   return (
     <>
       <style>{S}</style>
       <div className="shell">
+
+        {/* ── デスクトップ サイドバー ── */}
         <div className="sidebar">
           <div className="slogo">
             <div className="slogo-t">Yoshio Nice<br />Project</div>
@@ -550,29 +646,25 @@ export default function App() {
           </div>
           <div className="snav">
             <div className="snav-lbl">メニュー</div>
-            {navItems.map(item => (
+            {NAV_ITEMS.map(item => (
               <div
                 key={item.id}
                 className={`nitem ${!item.external && page === item.id ? "active" : ""} ${item.external ? "nitem-ext" : ""}`}
-                onClick={() => {
-                  if (item.external) {
-                    window.open(item.external, "_blank");
-                  } else {
-                    setPage(item.id);
-                  }
-                }}
+                onClick={() => handleNav(item)}
               >
                 <span>{item.icon}</span>
-                <span>{item.label}</span>
+                <span>{SIDEBAR_LABELS[item.id]}</span>
                 {item.external && <span className="ext-badge">↗ CLAUDE</span>}
               </div>
             ))}
           </div>
           <div className="sfooter"><strong>成毛喜男（Yoshio）</strong><span>51歳 ・ 京都府与謝野町</span></div>
         </div>
+
+        {/* ── メインエリア ── */}
         <div className="main">
           <div className="topbar">
-            <div className="topbar-t">{titles[page]}</div>
+            <div className="topbar-t">{TITLES[page]}</div>
             <div className="topbar-d">{todayStr}</div>
             <div className="topbar-r">
               <div className="nbtn" onClick={() => setShowNotif(!showNotif)}>
@@ -592,18 +684,36 @@ export default function App() {
               )}
             </div>
           </div>
+
           <div className="content">
             {loading ? <div className="loading">データを読み込み中...</div> : (
               <>
                 {page === "dashboard" && <Dashboard tasks={tasks} setTasks={setTasks} records={records} toast={showToast} />}
-                {page === "health" && <Health records={records} setRecords={setRecords} toast={showToast} />}
-                {page === "goals" && <Goals tasks={tasks} setTasks={setTasks} toast={showToast} />}
-                {page === "chat" && <Chat />}
-                {page === "journal" && <Journal journals={journals} setJournals={setJournals} toast={showToast} />}
+                {page === "health"    && <Health records={records} setRecords={setRecords} toast={showToast} />}
+                {page === "goals"     && <Goals tasks={tasks} setTasks={setTasks} toast={showToast} />}
+                {page === "chat"      && <Chat />}
+                {page === "journal"   && <Journal journals={journals} setJournals={setJournals} toast={showToast} />}
               </>
             )}
           </div>
         </div>
+
+        {/* ── スマホ ボトムタブナビ ── */}
+        <nav className="tab-nav">
+          <div className="tab-items">
+            {NAV_ITEMS.map(item => (
+              <div
+                key={item.id}
+                className={`tab-item ${!item.external && page === item.id ? "active" : ""} ${item.external ? "ext" : ""}`}
+                onClick={() => handleNav(item)}
+              >
+                <div className="tab-icon">{item.icon}</div>
+                <div>{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </nav>
+
         {toast && <div className="toast"><span>✅</span><span>{toast}</span></div>}
       </div>
     </>
